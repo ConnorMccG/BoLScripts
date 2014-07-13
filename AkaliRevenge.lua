@@ -9,7 +9,6 @@
 if myHero.charName ~= "Akali" then return end
 -- Champion selecton verification --
 
-
 -- Libs --
 require "SOW"
 require "VPrediction"
@@ -42,7 +41,7 @@ if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then
 	ignite = nil
 	end
 	
-	end
+end
 
 -- Full menu --
 function AkalisMenu()
@@ -55,6 +54,9 @@ function AkalisMenu()
 			AkaliMenu.combo:addParam("AllowE", "Use E in combo", SCRIPT_PARAM_ONOFF, true)
 			AkaliMenu.combo:addParam("AllowR", "Use R in combo", SCRIPT_PARAM_ONOFF, true)
 			AkaliMenu.combo:addParam("ChaseR", "Chase with R only", SCRIPT_PARAM_ONOFF, true)
+			
+		AkaliMenu:addSubMenu("Harass Settings", "harass")
+			AkaliMenu.harass:addParam("HarassKey", "Harass Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("A"))
 	
 	-- Draw Menu --
 		AkaliMenu:addSubMenu("Draw settings", "drawing")
@@ -71,12 +73,14 @@ function AkalisMenu()
 			AkaliMenu.IM:addParam("useHEX", "Use HexTech Revolver", SCRIPT_PARAM_ONOFF, true)
 		
 	-- Placeholder Menu --
-		AkaliMenu:addSubMenu("Summoner Spells", "SS")
+		AkaliMenu:addSubMenu("Extras", "SS")
 			AkaliMenu.SS:addParam("IgniteUse", "Use Ignite in combo", SCRIPT_PARAM_ONOFF, true)
+			AkaliMenu.SS:addParam("usepackets", "Use packets (VIP ONLY)", SCRIPT_PARAM_ONOFF, true)
 			
 	-- SOW Orbwalking handler --
 		AkaliMenu:addSubMenu("Orbwalker", "SOWiorb")	
 			SOWi:LoadToMenu(AkaliMenu.SOWiorb)
+			
 			
 end
 
@@ -96,6 +100,7 @@ end
 		
 		Zhonya = GetInventorySlotItem(3157)
 		ZhonyaReady = (Zhonya ~= nil and myHero:CanUseSpell(Zhonya) == READY)
+
 end
 
 -- Variables used to call easier --
@@ -116,11 +121,31 @@ ItemManagement()
 	end
 	
 	if (ts.target ~= nil) then
+		if (AkaliMenu.harass.HarassKey) then
+			FullHarass()
+		end
+	end
+
+	if (ts.target ~= nil) then
 		if (AkaliMenu.combo.ComboKey) then
 			FullCombo()
 		end
 	end
 end
+
+function FullHarass()
+
+	if GetDistance(ts.target, myHero) <= 600 then
+		if ValidTarget(ts.target, 600) then
+			if VIP_USER and AkaliMenu.SS.usepackets then
+				Packet("S_CAST", {spellId = _Q, targetNetworkId = ts.target.networkID}):send()
+			else
+				CastSpell(_Q, ts.target)
+			end
+		end
+	end
+end
+
 
 function FullCombo()
 	if AkaliMenu.combo.ComboKey and DFGR and AkaliMenu.IM.useDFG and GetDistance(ts.target, myHero) < 500 then 
@@ -163,24 +188,36 @@ function ChaseRActivate()
 if GetDistance(ts.target, myHero) >= 450 then
 	if GetDistance(ts.target, myHero) <= 800 then
 		if ValidTarget(ts.target) then
-			CastSpell(_R, ts.target)
+			if VIP_USER and AkaliMenu.SS.usepackets then
+				Packet("S_CAST", {spellId = _R}):send()
+			else
+				CastSpell(_R, ts.target)
 			end
 		end
 	end
+end
 end
 
 function ActivateQ()
 	if GetDistance(ts.target, myHero) <= 600 then
 		if ValidTarget(ts.target, 600) then
-			CastSpell(_Q, ts.target)
+			    if VIP_USER and AkaliMenu.SS.usepackets then
+						Packet("S_CAST", {spellId = _Q, targetNetworkId = ts.target.networkID}):send()
+					else
+						CastSpell(_Q, ts.target)
+					end
+			end
 		end
-	end
 end
 
 function ActivateE()
 	if GetDistance(ts.target, myHero) <= 325 then
 		if ValidTarget(ts.target, 325) then
-			CastSpell(_E, ts.target)
+			if VIP_USER and AkaliMenu.SS.usepackets then
+				Packet("S_CAST", {spellId = _E}):send()
+				else
+					CastSpell(_E, ts.target)
+			end
 		end
 	end
 end
@@ -188,7 +225,11 @@ end
 function ActivateR()
 if GetDistance(ts.target, myHero) <= 800 then
 			if ValidTarget(ts.target, 800) then
-			CastSpell(_R, ts.target)
+				if VIP_USER and AkaliMenu.SS.usepackets then
+					Packet("S_CAST", {spellId = _R, targetNetworkId = ts.target.networkID}):send()
+				else
+					CastSpell(_R, ts.target)
+			end
 		end	
 	end
 end
