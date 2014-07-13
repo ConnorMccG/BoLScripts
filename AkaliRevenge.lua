@@ -3,9 +3,11 @@ if myHero.charName ~= "Akali" then return end
 -- Champion selecton verification --
 
 
-
+-- Libs --
 require "SOW"
 require "VPrediction"
+
+-- Target Selector thingy --
 local ts
 
 
@@ -34,8 +36,6 @@ if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then
 	end
 	
 	end
- -- Loaded just once (Beginning of the game) --
-
 
 -- Full menu --
 function AkalisMenu()
@@ -72,11 +72,6 @@ function AkalisMenu()
 			SOWi:LoadToMenu(AkaliMenu.SOWiorb)
 
 -- Full menu --
-
-
-
-
-
  function ItemManagement()	
 		BilgeWaterCutlass = GetInventorySlotItem(3144)
 		BilgeWaterCutlassR = (BilgeWaterCutlass ~= nil and myHero:CanUseSpell(BilgeWaterCutlass))
@@ -155,7 +150,6 @@ function FullCombo()
 end
 
 -- Combo settings --
-
 function ChaseRActivate()
 if GetDistance(ts.target, myHero) >= 450 then
 	if GetDistance(ts.target, myHero) <= 800 then
@@ -174,7 +168,6 @@ function ActivateQ()
 	end
 end
 
-	
 function ActivateE()
 	if GetDistance(ts.target, myHero) <= 325 then
 		if ValidTarget(ts.target, 325) then
@@ -191,7 +184,6 @@ if GetDistance(ts.target, myHero) <= 820 then
 	end
 end
 
-
 -- Drawing options --
 function OnDraw()
 	if AkaliMenu.drawing.QRange then 
@@ -207,4 +199,3 @@ function OnDraw()
 		DrawCircle(myHero.x, myHero.y, myHero.z, 500, 0x111111)
 	end
 end
-
