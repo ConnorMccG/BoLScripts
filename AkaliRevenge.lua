@@ -1,3 +1,10 @@
+-- Credit to Jarvis101, Used his scripts to learn alot of what I put
+-- Credit to Jorj, Basically held my hand when creating from the beginning
+-- Credit to Bilbao, Answered alot of my forum questions
+
+-- I in no way claim to be a expert, I got babysat like hell on this script #First Script
+
+
 -- Champion selecton verification --
 if myHero.charName ~= "Akali" then return end
 -- Champion selecton verification --
@@ -177,8 +184,8 @@ function ActivateE()
 end
 
 function ActivateR()
-if GetDistance(ts.target, myHero) <= 820 then
-			if ValidTarget(ts.target, 820) then
+if GetDistance(ts.target, myHero) <= 800 then
+			if ValidTarget(ts.target, 800) then
 			CastSpell(_R, ts.target)
 		end	
 	end
