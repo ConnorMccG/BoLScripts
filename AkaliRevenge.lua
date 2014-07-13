@@ -17,7 +17,7 @@ require "VPrediction"
 local ts
 
 local AUTO_UPDATE = true
-local VERSION = 1.00
+local VERSION = 1.01
 
 
 if AUTO_UPDATE then
