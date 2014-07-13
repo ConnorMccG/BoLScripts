@@ -1,5 +1,5 @@
 -- Credit to Jarvis101, Used his scripts to learn alot of what I put
--- Credit to Jorj, Basically held my hand when creating from the beginning
+-- Credit to Jorj, Basically held my hand when creating from the beginning Da best yo
 -- Credit to Bilbao, Answered alot of my forum questions
 
 -- I in no way claim to be a expert, I got babysat like hell on this script #First Script
@@ -17,7 +17,7 @@ require "VPrediction"
 local ts
 
 local AUTO_UPDATE = true
-local VERSION = 1.01
+local VERSION = 1.00
 
 
 if AUTO_UPDATE then
