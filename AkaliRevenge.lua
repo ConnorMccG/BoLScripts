@@ -77,6 +77,8 @@ function AkalisMenu()
 	-- SOW Orbwalking handler --
 		AkaliMenu:addSubMenu("Orbwalker", "SOWiorb")	
 			SOWi:LoadToMenu(AkaliMenu.SOWiorb)
+			
+end
 
 -- Full menu --
  function ItemManagement()	
