@@ -9,7 +9,7 @@ require "VPrediction"
 local ts
 
 --[[		Auto Update		]]
-local version = "1.01"
+local version = "1.02"
 
 local autoupdateenabled = true
 local UPDATE_SCRIPT_NAME = "AkaliRevenge"
