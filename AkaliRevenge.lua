@@ -13,7 +13,7 @@ local version = "1.0"
 
 local autoupdateenabled = true
 local UPDATE_SCRIPT_NAME = "AkaliRevenge"
-local UPDATE_HOST = "raw.github.com"
+local UPDATE_HOST = "https://raw.githubusercontent.com"
 local UPDATE_PATH = "ConnorMccG/BoLScripts/master/AkaliRevenge.lua?rand="..math.random(1000)
 local UPDATE_FILE_PATH = SCRIPT_PATH..GetCurrentEnv().FILE_NAME
 local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
