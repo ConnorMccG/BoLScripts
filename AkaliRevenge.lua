@@ -84,7 +84,7 @@ function AkalisMenu()
 			
 end
 
--- Full menu --
+-- Items --
  function ItemManagement()	
 		BilgeWaterCutlass = GetInventorySlotItem(3144)
 		BilgeWaterCutlassR = (BilgeWaterCutlass ~= nil and myHero:CanUseSpell(BilgeWaterCutlass))
