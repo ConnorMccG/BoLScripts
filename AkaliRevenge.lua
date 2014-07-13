@@ -2,9 +2,38 @@
 if myHero.charName ~= "Akali" then return end
 -- Champion selecton verification --
 
+
+
 require "SOW"
 require "VPrediction"
 local ts
+
+--[[		Auto Update		]]
+local sversion = "1.0.0.1"
+local AUTOUPDATE = true --You can set this false if you don't want to autoupdate --
+local UPDATE_HOST = "https://raw.githubusercontent.com"
+local UPDATE_PATH = "/ConnorMccG/BoLScripts/master/AkaliRevenge.lua".."?rand="..math.random(1,10000)
+local UPDATE_FILE_PATH = SCRIPT_PATH.."AkaliRevenge.lua"
+local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
+
+function AutoupdaterMsg(msg) print("<font color=\"#6699ff\"><b>AkaliRevenge:</b></font> <font color=\"#FFFFFF\">"..msg..".</font>") end
+if AUTOUPDATE then
+	local ServerData = GetWebResult(UPDATE_HOST, "/ConnorMccG/BoLScripts/master/version/AkaliRevenge.version")
+	if ServerData then
+		ServerVersion = type(tonumber(ServerData)) == "number" and tonumber(ServerData) or nil
+		if ServerVersion then
+			if tonumber(sversion) < ServerVersion then
+				AutoupdaterMsg("New version available"..ServerVersion)
+				AutoupdaterMsg("Updating, please don't press F9")
+				DelayAction(function() DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function () AutoupdaterMsg("Successfully updated. ("..sversion.." => "..ServerVersion.."), press F9 twice to load the updated version.") end) end, 3)
+			else
+				AutoupdaterMsg("You have got the latest version ("..ServerVersion..")")
+			end
+		end
+	else
+		AutoupdaterMsg("Error downloading version info")
+	end
+end
 
  
  -- Loaded just once (Beginning of the game) --
@@ -33,7 +62,7 @@ end
 -- Full menu --
 function AkalisMenu()
 
-	AkaliMenu = scriptConfig("AkaliRevenge", "Akali")
+	AkaliMenu = scriptConfig("Akali, The flying assassin", "Akali")
 	-- Combo Menu
 		AkaliMenu:addSubMenu("Combo Settings", "combo")
 			AkaliMenu.combo:addParam("ComboKey", "Preform full combo", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -173,8 +202,8 @@ end
 end
 
 function ActivateR()
-if GetDistance(ts.target, myHero) <= 800 then
-	if ValidTarget(ts.target, 800) then
+if GetDistance(ts.target, myHero) <= 820 then
+	if ValidTarget(ts.target, 820) then
 		CastSpell(_R, ts.target)
 	end
 end
@@ -189,7 +218,7 @@ function OnDraw()
 		DrawCircle(myHero.x, myHero.y, myHero.z, 325, 0x111111)
 	end
 		if AkaliMenu.drawing.RRange then
-		DrawCircle(myHero.x, myHero.y, myHero.z, 800, 0x111111)
+		DrawCircle(myHero.x, myHero.y, myHero.z, 820, 0x111111)
 	end
 			if AkaliMenu.drawing.ChasingR then
 		DrawCircle(myHero.x, myHero.y, myHero.z, 500, 0x111111)
