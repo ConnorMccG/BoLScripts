@@ -6,8 +6,8 @@
 
 --[[
 v1.0 - Initial release
-v1.1 - Harass /w E removed temporarily
-v1.2 - Last hitting + Lane clear /w abilities added
+v1.01 - Harass /w E removed temporarily
+v1.02 - Last hitting + Lane clear /w abilities added
 
 
 
