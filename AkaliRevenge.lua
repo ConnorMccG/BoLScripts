@@ -4,6 +4,15 @@
 
 -- I in no way claim to be a expert, I got babysat like hell on this script #First Script
 
+--[[
+v1.0 - Initial release
+v1.1 - Harass /w E removed temporarily
+v1.2 - Last hitting + Lane clear /w abilities added
+
+
+
+--]]
+
 
 -- Champion selecton verification --
 if myHero.charName ~= "Akali" then return end
@@ -12,6 +21,11 @@ if myHero.charName ~= "Akali" then return end
 -- Libs --
 require "SOW"
 require "VPrediction"
+
+local qRange = 600
+local eRange = 325
+local rRange = 800
+local eDmg = nil
 
 -- Target Selector thingy --
 local ts
@@ -37,6 +51,7 @@ end
  -- Loaded just once (Beginning of the game) --
 function OnLoad()
 
+enemyMinions = minionManager(MINION_ENEMY, qRange, myHero, MINION_SORT_MAXHEALTH_DEC)
 VP = VPrediction()
 SOWi = SOW(VP)
 SOWi:RegisterAfterAttackCallback(AutoAttackRese)
@@ -70,6 +85,7 @@ function AkalisMenu()
 			AkaliMenu.combo:addParam("AllowR", "Use R in combo", SCRIPT_PARAM_ONOFF, true)
 			AkaliMenu.combo:addParam("ChaseR", "Chase with R only", SCRIPT_PARAM_ONOFF, true)
 			
+	-- Harass menu --
 		AkaliMenu:addSubMenu("Harass Settings", "harass")
 			AkaliMenu.harass:addParam("HarassKey", "Harass Key", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("A"))
 	
@@ -79,7 +95,19 @@ function AkalisMenu()
 			AkaliMenu.drawing:addParam("ERange", "Draw E Range", SCRIPT_PARAM_ONOFF, true)
 			AkaliMenu.drawing:addParam("RRange", "Draw R Range", SCRIPT_PARAM_ONOFF, true)
 			AkaliMenu.drawing:addParam("ChasingR", "Draw R Chase Range", SCRIPT_PARAM_ONOFF, true)
-
+			
+	-- Lane Clear --
+		AkaliMenu:addSubMenu("Lane Clear Settings", "lc")
+			AkaliMenu.lc:addParam("useQ", "Use Q in laneclear", SCRIPT_PARAM_ONOFF, true)
+			AkaliMenu.lc:addParam("useE", "Use E in laneclear", SCRIPT_PARAM_ONOFF, true)
+			AkaliMenu.lc:addParam("laneclear", "Laneclear mode", SCRIPT_PARAM_ONKEYDOWN, false, 86)
+	
+	-- Last hitting --
+		AkaliMenu:addSubMenu("Last hit settings", "lh")
+			AkaliMenu.lh:addParam("lasthit", "Lasthit mode", SCRIPT_PARAM_ONKEYDOWN, false, 88)
+			AkaliMenu.lh:addParam("useQ", "Use Q to lasthit", SCRIPT_PARAM_ONOFF, false)
+			AkaliMenu.lh:addParam("useE", "Use E to lasthit", SCRIPT_PARAM_ONOFF, true)
+			
 	-- Item Management Menu --
 		AkaliMenu:addSubMenu("Item Management", "IM")
 			AkaliMenu.IM:addParam("AutoZhonya", "Zhonya's Low health", SCRIPT_PARAM_ONOFF, true)
@@ -97,6 +125,47 @@ function AkalisMenu()
 			SOWi:LoadToMenu(AkaliMenu.SOWiorb)
 			
 			
+end
+
+-- Calc E damage /w levels --
+function eDamage()
+  if myHero:GetSpellData(_E).level == 1 then eDmg = 30
+  elseif myHero:GetSpellData(_E).level == 2 then eDmg = 55
+  elseif myHero:GetSpellData(_E).level == 3 then eDmg = 80
+  elseif myHero:GetSpellData(_E).level == 4 then eDmg = 105
+  elseif myHero:GetSpellData(_E).level == 5 then eDmg = 130
+  end
+end 
+
+-- Last hitting zone --
+function LastHitMode()
+eDamage()
+  for i, minion in pairs(enemyMinions.objects) do
+    if minion ~= nil then
+      if ValidTarget(minion, qRange) and AkaliMenu.lh.useQ and getDmg("Q", minion, myHero) >= minion.health then
+        CastSpell(_Q, minion)
+      end
+      if ValidTarget(minion, eRange) and AkaliMenu.lh.useE and (getDmg("AD", minion, myHero) + (eDmg + (myHero.ap * 0.4 ))) >= minion.health then 
+        CastSpell(_E)
+      end
+    end
+  end
+end
+
+ -- Lane clear zone --
+function LaneclearMode() 
+  for i, minion in pairs(enemyMinions.objects) do
+    if minion ~= nil and ValidTarget(minion, qRange) and Qready and AkaliMenu.lc.useQ then
+      if getDmg("Q", minion, myHero) >= minion.health then
+        CastSpell(_Q, minion)
+      else
+        CastSpell(_Q, minion)
+      end
+    end
+    if minion ~= nil and ValidTarget(minion, eRange) and Eready and AkaliMenu.lc.useE then
+        CastSpell(_E)
+    end
+  end
 end
 
 -- Full menu --
@@ -130,6 +199,11 @@ function OnTick()
 ts:update()
 Variables()
 ItemManagement()
+SOWi:EnableAttacks()
+enemyMinions:update()
+
+if AkaliMenu.lh.lasthit then LastHitMode() end
+if AkaliMenu.lc.laneclear then LaneclearMode() end
 
 	if (myHero.health < 400) and AkaliMenu.IM.AutoZhonya then
 		CastSpell(Zhonya)
