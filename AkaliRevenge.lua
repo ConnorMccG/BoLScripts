@@ -8,8 +8,7 @@
 v1.0 - Initial release
 v1.01 - Harass /w E removed temporarily
 v1.02 - Last hitting + Lane clear /w abilities added
-
-
+v1.03 - Fixed a bug where if E wasn't learn't lane clear / last hit would bug out
 
 --]]
 
@@ -31,7 +30,7 @@ local eDmg = nil
 local ts
 
 local AUTO_UPDATE = true
-local VERSION = 1.02
+local VERSION = 1.03
 
 
 if AUTO_UPDATE then
@@ -142,10 +141,10 @@ function LastHitMode()
 eDamage()
   for i, minion in pairs(enemyMinions.objects) do
     if minion ~= nil then
-      if ValidTarget(minion, qRange) and AkaliMenu.lh.useQ and getDmg("Q", minion, myHero) >= minion.health then
+      if ValidTarget(minion, qRange) and AkaliMenu.lh.useQ and Qready and getDmg("Q", minion, myHero) >= minion.health then
         CastSpell(_Q, minion)
       end
-      if ValidTarget(minion, eRange) and AkaliMenu.lh.useE and (getDmg("AD", minion, myHero) + (eDmg + (myHero.ap * 0.4 ))) >= minion.health then 
+      if ValidTarget(minion, eRange) and AkaliMenu.lh.useE and EReady and (getDmg("AD", minion, myHero) + (eDmg + (myHero.ap * 0.4 ))) >= minion.health then 
         CastSpell(_E)
       end
     end
