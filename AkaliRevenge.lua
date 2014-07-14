@@ -31,7 +31,7 @@ local eDmg = nil
 local ts
 
 local AUTO_UPDATE = true
-local VERSION = 1.01
+local VERSION = 1.02
 
 
 if AUTO_UPDATE then
