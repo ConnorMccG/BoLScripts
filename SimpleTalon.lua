@@ -23,7 +23,7 @@ function updater()
 	if ServerResult then
 		ServerVersion = tonumber(ServerResult)
 		if Version < ServerVersion then
-			Print("A new version is available: v"..ServerVersion..". Attempting to download now.")
+			print("A new version is available: v"..ServerVersion..". Attempting to download now.")
 			DelayAction(function() DownloadFile("https://raw.githubusercontent.com/ConnorMccG/BoLScripts/master/SimpleTalon.lua".."?rand"..math.random(1,9999), SCRIPT_PATH.."SimpleTalon.lua", function() Print("Successfully downloaded the latest version: v"..ServerVersion..".") end) end, 2)
 		else
 			print("You are running the latest version: v"..Version..".")
