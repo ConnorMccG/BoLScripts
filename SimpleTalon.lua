@@ -11,12 +11,12 @@ if myHero.charName ~= "Talon" then return end
 require "SxOrbWalk"
 require "VPrediction"
 
-local qRange = 1250
+local qRange = 200
 local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
-local Version = 1.01
+local Version = 1.02
 
 function updater()
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
@@ -80,6 +80,8 @@ function TalonMenu()
 		-- Harass Settings --
 		TalonMenu:addSubMenu("Harass Settings", "HS")
 			TalonMenu.HS:addParam("harassW", "Use Rake", SCRIPT_PARAM_ONOFF, false)
+			TalonMenu.HS:addParam("harassE", "Use Cutthroat", SCRIPT_PARAM_ONOFF, false)
+			TalonMenu.HS:addParam("harassQ", "Use Noxian Diplomacy", SCRIPT_PARAM_ONOFF, false)
 			
 		-- TalonMenu:addSubMenu("Miscellaneous", "Misc")
 
@@ -145,6 +147,22 @@ function Combo()
 end	
 
 function Harass()
+	
+		if (ts.target ~= nil) and Eready then
+			if ValidTarget(ts.target, 700) and TalonMenu.KB.HarassKey then
+				if GetDistance(ts.target, myHero) <= 700 and TalonMenu.HS.harassE then
+						CastSpell(_E, ts.target)
+				end
+			end
+		end
+		
+		if (ts.target ~= nil) and Qready then
+			if ValidTarget(ts.target, 250) and TalonMenu.KB.HarassKey then
+				if GetDistance(ts.target, myHero) <= 250 and TalonMenu.HS.harassQ then
+						CastSpell(_Q, myHero:Attack(ts.target))
+				end
+			end
+		end
 	
 		if (ts.target ~= nil) and Wready then
 			if ValidTarget(ts.target, 600) and TalonMenu.KB.HarassKey then
