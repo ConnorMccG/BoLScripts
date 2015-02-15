@@ -16,7 +16,7 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
-local Version = 1.0
+local Version = 1.01
 
 function updater()
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
@@ -119,7 +119,7 @@ function Combo()
 	if (ts.target ~= nil) and Qready then
 		if ValidTarget(ts.target, 250) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 250 and TalonMenu.CS.comboQ then
-				CastSpell(_Q)
+				CastSpell(_Q, myHero:Attack(ts.target))
 			end
 		end
 	end
@@ -138,8 +138,8 @@ function Combo()
 		if TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target) < 600 and ts.target.health <= (50 + (20 * myHero.level)) then
 				CastSpell(ignite, ts.target)
+			end
 		end
-	end
 	end
 
 end	
