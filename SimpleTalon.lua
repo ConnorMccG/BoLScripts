@@ -1,4 +1,4 @@
---[[
+         --[[
 	- Author: ConnorMcG
 
 v1.0 - Initial release (15-02-2015)
@@ -16,6 +16,32 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
+local version = 1.1
+
+local AUTO_UPDATE = true
+local UPDATE_HOST = "raw.github.com"
+local UPDATE_PATH = "/ConnorMccG/BoLScripts/master/SimpleTalon.lua".."?rand="..math.random(1,10000)
+local UPDATE_FILE_PATH = LIB_PATH.."SimpleTalon.lua"
+local UPDATE_URL = "https://"..UPDATE_HOST..UPDATE_PATH
+
+local function AutoupdaterMsg(msg) print("<font color=\"#6699ff\"><b>Yours Teemo:</b></font> <font color=\"#FFFFFF\">"..msg..".</font>") end
+if AUTO_UPDATE then
+	local ServerData = GetWebResult(UPDATE_HOST, "/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
+	if ServerData then
+		ServerVersion = type(tonumber(ServerData)) == "number" and tonumber(ServerData) or nil
+		if ServerVersion then
+			if tonumber(version) < ServerVersion then
+				AutoupdaterMsg("New version available"..ServerVersion)
+				AutoupdaterMsg("Updating, please don't press F9")
+				DelayAction(function() DownloadFile(UPDATE_URL, UPDATE_FILE_PATH, function () AutoupdaterMsg("Successfully updated. ("..version.." => "..ServerVersion.."), press F9 twice to load the updated version.") end) end, 3)
+			else
+				AutoupdaterMsg("You have got the latest version ("..ServerVersion..")")
+			end
+		end
+	else
+		AutoupdaterMsg("Error downloading version info")
+	end
+end
 
 function OnTick()
 	
