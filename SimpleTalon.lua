@@ -16,7 +16,7 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
-local Version = 1.0
+local Version = 1.1
 
 function General:Updater()
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
