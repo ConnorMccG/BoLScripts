@@ -16,22 +16,7 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
-local Version = 1.1
 
-function General:Updater()
-	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
-	if ServerResult then
-		ServerVersion = tonumber(ServerResult)
-		if Version < ServerVersion then
-			Print("A new version is available: v"..ServerVersion..". Attempting to download now.")
-			DelayAction(function() DownloadFile("https://raw.githubusercontent.com/ConnorMccG/BoLScripts/master/SimpleTalon.lua".."?rand"..math.random(1,9999), SCRIPT_PATH.."SimpleTalon.lua", function() Print("Successfully downloaded the latest version: v"..ServerVersion..".") end) end, 2)
-		else
-			Print("You are running the latest version: v"..Version..".")
-		end
-	else
-		Print("Error finding server version.")
-	end
-end
 
 function OnTick()
 	
