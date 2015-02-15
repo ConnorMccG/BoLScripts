@@ -19,7 +19,7 @@ local ts
 
 
 function updater()
-	local Version = 1.02
+	local Version = 1.03
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
 	print(ServerResult)
 	if ServerResult then
@@ -60,9 +60,6 @@ function OnLoad()
 	updater()
 
 	
-	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then ignite = SUMMONER_1
-	elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then ignite = SUMMONER_2
-	end
 	
 end
 
@@ -133,15 +130,6 @@ function Combo()
 		if ValidTarget(ts.target, 500) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 500 and TalonMenu.CS.comboR then
 				CastSpell(_R)
-			end
-		end
-	end
-
-	
-	if (ts.target ~= nil) and TalonMenu.CS.comboI then
-		if TalonMenu.KB.ComboKey then
-			if GetDistance(ts.target) < 600 and ts.target.health <= (50 + (20 * myHero.level)) then
-				CastSpell(ignite, ts.target)
 			end
 		end
 	end
