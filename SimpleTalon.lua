@@ -135,9 +135,11 @@ function Combo()
 
 	
 	if (ts.target ~= nil) and TalonMenu.CS.comboI then
-		if GetDistance(ts.target) < 600 and ts.target.health <= (50 + (20 * myHero.level)) then
+		if TalonMenu.KB.ComboKey then
+			if GetDistance(ts.target) < 600 and ts.target.health <= (50 + (20 * myHero.level)) then
 				CastSpell(ignite, ts.target)
 		end
+	end
 	end
 
 end	
