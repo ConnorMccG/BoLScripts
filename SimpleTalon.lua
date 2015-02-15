@@ -16,6 +16,22 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
+local Version = 1.1
+
+function updater()
+	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
+	if ServerResult then
+		ServerVersion = tonumber(ServerResult)
+		if Version < ServerVersion then
+			Print("A new version is available: v"..ServerVersion..". Attempting to download now.")
+			DelayAction(function() DownloadFile("https://raw.githubusercontent.com/ConnorMccG/BoLScripts/master/SimpleTalon.lua".."?rand"..math.random(1,9999), SCRIPT_PATH.."SimpleTalon.lua", function() Print("Successfully downloaded the latest version: v"..ServerVersion..".") end) end, 2)
+		else
+			print("You are running the latest version: v"..Version..".")
+		end
+	else
+		print("Error finding server version.")
+	end
+end
 
 
 function OnTick()
@@ -39,6 +55,8 @@ function OnLoad()
 	VP = VPrediction()
 	SxO = SxOrbWalk(VP)
 	TalonMenu()
+	updater()
+
 	
 	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then ignite = SUMMONER_1
 	elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then ignite = SUMMONER_2
@@ -101,7 +119,7 @@ function Combo()
 	if (ts.target ~= nil) and Qready then
 		if ValidTarget(ts.target, 250) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 250 and TalonMenu.CS.comboQ then
-				SxO:RegisterAfterAttackCallback(function() CastSpell(_Q) end)	
+				CastSpell(_Q)
 			end
 		end
 	end
