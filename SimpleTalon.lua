@@ -16,23 +16,69 @@ local wRange = 600
 local eRange = 700
 local rRange = 450
 local ts
+local Version = 1.01
 
+local Version = 1.04
+local ScriptName = GetCurrentEnv().FILE_NAME
 
-function updater()
-	local Version = 1.03
-	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
-	print(ServerResult)
-	if ServerResult then
-		ServerVersion = tonumber(ServerResult)
-		if Version < ServerVersion then
-			print("A new version is available: v"..ServerVersion..". Attempting to download now.")
-			DelayAction(function() DownloadFile("https://raw.githubusercontent.com/ConnorMccG/BoLScripts/master/SimpleTalon.lua".."?rand"..math.random(1,9999), SCRIPT_PATH.."SimpleTalon.lua", function() print("Successfully downloaded the latest version (please reload): v"..ServerVersion..".") end) end, 2)
-		else
-			print("You are running the latest version: v"..Version..".")
+AddLoadCallback(function()
+	Updater(true)
+end)
+
+class 'Updater'
+function Updater:__init(au)
+	--[[Credits to Bilbao & Aroc]]
+	if au ~= true then return end
+	self.Host = "raw.githubusercontent.com"
+	self.VersionPath = "/ConnorMccG/BoLScripts/master/version/SimpleTalon.version"
+	self.ScriptPath = "/ConnorMccG/BoLScripts/master/SimpleTalon.lua"
+	self.SavePath = SCRIPT_PATH..ScriptName
+	self.LuaSocket = require("socket")
+	Print("Checking for updates.")
+	AddTickCallback(function()
+		if not self.OnlineVersion and not self.VersionSocket then
+			self.VersionSocket = self.LuaSocket.connect("sx-bol.eu", 80)
+			self.VersionSocket:send("GET /BoL/TCPUpdater/GetScript.php?script="..self.Host..self.VersionPath.."&rand="..tostring(math.random(1000)).." HTTP/1.0\r\n\r\n")
 		end
-	else
-		print("Error finding server version.")
-	end
+		if not self.OnlineVersion and self.VersionSocket then
+			self.VersionSocket:settimeout(0, 'b')
+			self.VersionSocket:settimeout(99999999, 't')
+			self.VersionReceive, self.VersionStatus = self.VersionSocket:receive('*a')
+		end
+		if not self.OnlineVersion and self.VersionSocket and self.VersionStatus ~= 'timeout' then
+			if self.VersionReceive then
+				self.OnlineVersion = tonumber(string.sub(self.VersionReceive, string.find(self.VersionReceive, "<bols".."cript>")+11, string.find(self.VersionReceive, "</bols".."cript>")-1))
+			else
+				Print("AutoUpdate has failed, please download manually.")
+				self.OnlineVersion = 0
+			end
+			if self.OnlineVersion > Version then
+				self.ScriptSocket = self.LuaSocket.connect("sx-bol.eu", 80)
+				self.ScriptSocket:send("GET /BoL/TCPUpdater/GetScript.php?script="..self.Host..self.ScriptPath.."&rand="..tostring(math.random(1000)).." HTTP/1.0\r\n\r\n")
+				self.ScriptReceive, self.ScriptStatus = self.ScriptSocket:receive('*a')
+				self.ScriptRAW = string.sub(self.ScriptReceive, string.find(self.ScriptReceive, "<bols".."cript>")+11, string.find(self.ScriptReceive, "</bols".."cript>")-1)
+				local ScriptFileOpen = io.open(self.SavePath, "w+")
+				ScriptFileOpen:write(self.ScriptRAW)
+				ScriptFileOpen:close()
+			end
+			if Version < self.OnlineVersion then
+				Print("Automatically reloading "..ScriptName)
+				DelayAction(function() dofile(SCRIPT_PATH..ScriptName) end, 0.5)
+			else
+				self:Load()
+			end
+		end
+	end)
+end
+
+function Updater:Load()
+	Print("Loaded")
+	--[[Place OnLoad items here]]
+	Loaded = true
+end
+
+function Print(m)
+	print("<font color=\"#FF0000\">[SimpleTalon]</font> <font color=\"#FFFFFF\">"..m.."</font>")
 end
 
 
@@ -46,6 +92,7 @@ function OnTick()
 	ts:update()
 	Combo()
 	Harass()
+	if Loaded ~= true then return end
 
 end
 
@@ -60,6 +107,9 @@ function OnLoad()
 	updater()
 
 	
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then ignite = SUMMONER_1
+	elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then ignite = SUMMONER_2
+	end
 	
 end
 
@@ -130,6 +180,15 @@ function Combo()
 		if ValidTarget(ts.target, 500) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 500 and TalonMenu.CS.comboR then
 				CastSpell(_R)
+			end
+		end
+	end
+
+	
+	if (ts.target ~= nil) and TalonMenu.CS.comboI then
+		if TalonMenu.KB.ComboKey then
+			if GetDistance(ts.target) < 600 and ts.target.health <= (50 + (20 * myHero.level)) then
+				CastSpell(ignite, ts.target)
 			end
 		end
 	end
