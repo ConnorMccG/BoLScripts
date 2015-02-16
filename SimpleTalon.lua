@@ -55,6 +55,7 @@ function OnLoad()
 	VP = VPrediction()
 	SxO = SxOrbWalk(VP)
 	TalonMenu()
+	updater()
 
 	
 end
