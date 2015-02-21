@@ -1,8 +1,9 @@
 --[[
-	- Author: ConnorMcG
-v1.0 - Initial release (15-02-2015)
---]]
 
+	- Author: ConnorMcG
+	- Released: 15-02-2015
+
+--]]
 
 if myHero.charName ~= "Talon" then return end
 assert(load(Base64Decode("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"), nil, "bt", _ENV))() ScriptStatus("SFIGIFENGLE") 
@@ -10,6 +11,13 @@ assert(load(Base64Decode("G0x1YVIAAQQEBAgAGZMNChoKAAAAAAAAAAAAAQIKAAAABgBAAEFAAA
 require "SxOrbWalk"
 require "VPrediction"
 
+local KillText = {}
+local KillTextColor = ARGB(255, 216, 247, 8)
+local KillTextList = {		
+			"Harass Him", --1
+			"Combo Kill", --2
+					}
+					
 local qRange = 200
 local wRange = 600
 local eRange = 700
@@ -17,7 +25,7 @@ local rRange = 450
 local ts
 
  function updater()
-	local Version = 1.05
+	local Version = 1.06
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
 	print(ServerResult)
 	if ServerResult then
@@ -40,10 +48,15 @@ function OnTick()
 	Wready = (myHero:CanUseSpell(_W) == READY)
 	Eready = (myHero:CanUseSpell(_E) == READY)
 	Rready = (myHero:CanUseSpell(_R) == READY)
+	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 700)
 	
 	ts:update()
 	Harass()
 	ComboSettings()
+	if TalonMenu.KS.enableKS then
+	killsteal()
+	end
+	DmgCalculations()
 
 end
 
@@ -57,16 +70,19 @@ function ComboSettings()
 	end
 end
 
-
 function OnLoad()
 	
 	PrintChat("<font color='#aaff34'>// Talon Script Initialized, Have Fun!</font>")
-	ts = TargetSelector(TARGET_LESS_CAST_PRIORITY, 700)
 	VP = VPrediction()
 	SxO = SxOrbWalk(VP)
 	TalonMenu()
 	updater()
-
+--[[
+	if myHero:GetSpellData(SUMMONER_1).name:find("summonerdot") then useIgnite = SUMMONER_1
+	elseif myHero:GetSpellData(SUMMONER_2).name:find("summonerdot") then useIgnite = SUMMONER_2
+	end
+	--]]
+	
 end
 
 
@@ -88,6 +104,14 @@ function TalonMenu()
 			TalonMenu.HS:addParam("harassE", "Use Cutthroat", SCRIPT_PARAM_ONOFF, false)
 			TalonMenu.HS:addParam("harassQ", "Use Noxian Diplomacy", SCRIPT_PARAM_ONOFF, false)
 			
+		-- Killsteal Settings --
+		TalonMenu:addSubMenu("Killsteal Settings", "KS")
+			TalonMenu.KS:addParam("enableKS", "Enable Killsteal", SCRIPT_PARAM_ONOFF, true)
+			TalonMenu.KS:addParam("killstealQ", "Use Noxian Diplomacy", SCRIPT_PARAM_ONOFF, true)
+			TalonMenu.KS:addParam("killstealW", "Use Rake", SCRIPT_PARAM_ONOFF, true)
+			TalonMenu.KS:addParam("killstealE", "Use Cutthroat", SCRIPT_PARAM_ONOFF, true)
+			TalonMenu.KS:addParam("killstealR", "Use Shadow Assault", SCRIPT_PARAM_ONOFF, false)
+			
 		-- Keybinding settings --
 		TalonMenu:addSubMenu("Keybindings", "KB")
 			TalonMenu.KB:addParam("ComboKey", "Combo Key", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -98,14 +122,53 @@ function TalonMenu()
 			TalonMenu.Drawing:addParam("WRange", "W Range", SCRIPT_PARAM_ONOFF, false)
 			TalonMenu.Drawing:addParam("ERange", "E Range", SCRIPT_PARAM_ONOFF, false)
 			TalonMenu.Drawing:addParam("RRange", "R Range", SCRIPT_PARAM_ONOFF, false)
+			TalonMenu.Drawing:addParam("DmgCalcs", "Killable Text", SCRIPT_PARAM_ONOFF, true)
 			
 		-- Orb Walker --
 		TalonMenu:addSubMenu("Orbwalker", "SxOrb")
 			SxO:LoadToMenu(TalonMenu.SxOrb)
 
-
 end
 
+function killsteal()
+	for i=1, heroManager.iCount do
+		local enemy = heroManager:GetHero(i)
+		local qDmg = ((getDmg("Q", enemy, myHero)) or 0)	
+		local wDmg = ((getDmg("W", enemy, myHero)) or 0)	
+		local eDmg = ((getDmg("E", enemy, myHero)) or 0)	
+		local rDmg = ((getDmg("R", enemy, myHero)) or 0)
+	if ValidTarget(enemy) and Enemy ~= nil then
+		if enemy.health < qDmg and TalonMenu.KS.killstealQ and ValidTarget(enemy, qRange) then
+			CastSpell(_Q, enemy)
+		elseif enemy.health < wDmg and TalonMenu.KS.killstealW and ValidTarget(enemy, wRange) then
+			CastSpell(_W, enemy)
+		elseif enemy.health < rDmg and TalonMenu.KS.killstealR and ValidTarget(enemy, rRange) then
+			CastSpell(_R, enemy)
+		end
+	end
+end
+end
+
+function DmgCalculations()
+	for i=1, heroManager.iCount do
+		local enemy = heroManager:GetHero(i)
+	local qDmg = ((getDmg("Q", enemy, myHero)) or 0)	
+local wDmg = ((getDmg("W", enemy, myHero)) or 0)	
+local eDmg = ((getDmg("E", enemy, myHero)) or 0)	
+local rDmg = ((getDmg("R", enemy, myHero)) or 0)
+local aaDmg = ((getDmg("AD", enemy, myHero)))
+			if ValidTarget(enemy) and enemy ~= nil then
+				if TalonMenu.Drawing.DmgCalcs then
+				if enemy.health <= (aaDmg + qDmg + wDmg + eDmg + rDmg) then
+					KillText[i] = 2
+				end
+				if enemy.health > (aaDmg + wDmg + eDmg + rDmg) then
+					KillText[i] = 1
+				end
+			end
+		end
+	end
+end
 
 
 function Combo1()
@@ -118,7 +181,6 @@ function Combo1()
 		end
 	end
 
-	
 	if (ts.target ~= nil) and Wready then
 		if ValidTarget(ts.target, 600) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 600 and TalonMenu.CS.comboW then
@@ -126,7 +188,6 @@ function Combo1()
 			end
 		end
 	end
-	
 	
 	if (ts.target ~= nil) and Qready then
 		if ValidTarget(ts.target, 250) and TalonMenu.KB.ComboKey then
@@ -136,16 +197,16 @@ function Combo1()
 		end
 	end
 
-	
 	if (ts.target ~= nil) and Rready then
 		if ValidTarget(ts.target, 500) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 500 and TalonMenu.CS.comboR then
+				if TalonMenu.CS.killR and (ts.target.health < rDmg) then
 				CastSpell(_R)
 			end
 		end
 	end
-
-end	
+end
+end
 
 function Combo2()
 
@@ -182,7 +243,6 @@ function Combo2()
 	end
 
 end	
-
 
 function Harass()
 	
@@ -221,5 +281,18 @@ function OnDraw()
 	end
 	if TalonMenu.Drawing.RRange then
 		DrawCircle(myHero.x, myHero.y, myHero.z, 500, 0x111111)
+	end
+	
+	
+		if TalonMenu.Drawing.DmgCalcs then
+		for i = 1, heroManager.iCount do
+			local enemy = heroManager:GetHero(i)
+				if ValidTarget(enemy) and enemy ~= nil then
+					local barPos = WorldToScreen(D3DXVECTOR3(enemy.x, enemy.y, enemy.z))
+					local PosX = barPos.x - 60
+					local PosY = barPos.y - 10
+					DrawText(KillTextList[KillText[i]], 15, PosX, PosY, KillTextColor)
+				end
+			end
 	end
 end
