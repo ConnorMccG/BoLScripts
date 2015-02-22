@@ -196,7 +196,6 @@ function Combo1()
 	if (ts.target ~= nil) and Rready then
 		if ValidTarget(ts.target, 500) and TalonMenu.KB.ComboKey then
 			if GetDistance(ts.target, myHero) <= 500 and TalonMenu.CS.comboR then
-				if TalonMenu.CS.killR and (ts.target.health < rDmg) then
 				CastSpell(_R)
 			end
 		end
