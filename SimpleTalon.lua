@@ -25,7 +25,7 @@ local rRange = 450
 local ts
 
  function updater()
-	local Version = 1.06
+	local Version = 1.07
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
 	print(ServerResult)
 	if ServerResult then
@@ -106,11 +106,10 @@ function TalonMenu()
 			
 		-- Killsteal Settings --
 		TalonMenu:addSubMenu("Killsteal Settings", "KS")
-			TalonMenu.KS:addParam("enableKS", "Enable Killsteal", SCRIPT_PARAM_ONOFF, true)
+			TalonMenu.KS:addParam("enableKS", "Enable Killsteal", SCRIPT_PARAM_ONOFF, false)
 			TalonMenu.KS:addParam("killstealQ", "Use Noxian Diplomacy", SCRIPT_PARAM_ONOFF, true)
 			TalonMenu.KS:addParam("killstealW", "Use Rake", SCRIPT_PARAM_ONOFF, true)
-			TalonMenu.KS:addParam("killstealE", "Use Cutthroat", SCRIPT_PARAM_ONOFF, true)
-			TalonMenu.KS:addParam("killstealR", "Use Shadow Assault", SCRIPT_PARAM_ONOFF, false)
+			TalonMenu.KS:addParam("killstealR", "Use Shadow Assault", SCRIPT_PARAM_ONOFF, true)
 			
 		-- Keybinding settings --
 		TalonMenu:addSubMenu("Keybindings", "KB")
@@ -137,13 +136,11 @@ function killsteal()
 		local wDmg = ((getDmg("W", enemy, myHero)) or 0)	
 		local eDmg = ((getDmg("E", enemy, myHero)) or 0)	
 		local rDmg = ((getDmg("R", enemy, myHero)) or 0)
-	if ValidTarget(enemy) and Enemy ~= nil then
+	if ValidTarget(enemy) and Enemy ~= nil and TalonMenu.KS.enableKS then
 		if enemy.health < qDmg and TalonMenu.KS.killstealQ and ValidTarget(enemy, qRange) then
 			CastSpell(_Q, enemy)
 		elseif enemy.health < wDmg and TalonMenu.KS.killstealW and ValidTarget(enemy, wRange) then
 			CastSpell(_W, enemy)
-		elseif enemy.health < rDmg and TalonMenu.KS.killstealR and ValidTarget(enemy, rRange) then
-			CastSpell(_R, enemy)
 		end
 	end
 end
@@ -161,8 +158,7 @@ local aaDmg = ((getDmg("AD", enemy, myHero)))
 				if TalonMenu.Drawing.DmgCalcs then
 				if enemy.health <= (aaDmg + qDmg + wDmg + eDmg + rDmg) then
 					KillText[i] = 2
-				end
-				if enemy.health > (aaDmg + wDmg + eDmg + rDmg) then
+				elseif enemy.health > (aaDmg + wDmg + eDmg + rDmg) then
 					KillText[i] = 1
 				end
 			end
