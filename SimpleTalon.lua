@@ -25,7 +25,7 @@ local rRange = 450
 local ts
 
  function updater()
-	local Version = 1.07
+	local Version = 1.08
 	local ServerResult = GetWebResult("raw.github.com","/ConnorMccG/BoLScripts/master/version/SimpleTalon.version")
 	print(ServerResult)
 	if ServerResult then
